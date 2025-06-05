@@ -1,12 +1,19 @@
 import streamlit as st
-import requests
-import beautifulsoup4
 import pandas as pd
 import re
 from urllib.parse import urlparse
 import json
 import time
 from datetime import datetime
+
+# Check for required packages
+try:
+    import requests
+    from bs4 import BeautifulSoup
+    PACKAGES_AVAILABLE = True
+except ImportError as e:
+    PACKAGES_AVAILABLE = False
+    MISSING_PACKAGES = str(e)
 
 # Page configuration
 st.set_page_config(
@@ -58,6 +65,32 @@ st.markdown("""
 
 # Header
 st.markdown('<div class="main-header"><h1>💬 Comment Extractor</h1><p>Extract comments and responses from various platforms</p></div>', unsafe_allow_html=True)
+
+# Check if required packages are available
+if not PACKAGES_AVAILABLE:
+    st.error("⚠️ Missing Required Packages")
+    st.markdown("""
+    This app requires additional packages to be installed. Please run the following command in your terminal:
+    
+    ```bash
+    pip install requests beautifulsoup4
+    ```
+    
+    **Or install all requirements at once:**
+    ```bash
+    pip install streamlit requests beautifulsoup4 pandas lxml
+    ```
+    
+    **If using conda:**
+    ```bash
+    conda install requests beautifulsoup4 pandas lxml
+    ```
+    
+    After installation, restart the Streamlit app.
+    """)
+    
+    st.info(f"**Error details:** {MISSING_PACKAGES}")
+    st.stop()  # Stop execution here
 
 class CommentExtractor:
     def __init__(self):
